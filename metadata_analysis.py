@@ -67,9 +67,12 @@ for cell in cells:
         data[cell][layer]['cell_locs'] = []
         if data[cell][layer]['nCell'] > 0:
             for celli in metadata[metadata[cell] & metadata[layer]].iloc:
-                skel = c3_cloudvolume.skeleton.get(int(celli.name))
-                soma_ind = np.argmax(skel.radii)
-                data[cell][layer]['cell_locs'].append(list(skel.vertices[soma_ind]))
+                try:
+                    skel = c3_cloudvolume.skeleton.get(int(celli.name))
+                    soma_ind = np.argmax(skel.radii)
+                    data[cell][layer]['cell_locs'].append(list(skel.vertices[soma_ind]))
+                except:
+                    print('Cell ID: %s is missing' % (celli.name))
     print('\n')
 
 # Vol_nrn = 0
