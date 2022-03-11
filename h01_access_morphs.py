@@ -30,26 +30,67 @@ pyrcells.head()
 skel = c3_cloudvolume.skeleton.get(int(pyrcells.iloc[2].name))
 
 soma_ind = np.argmax(skel.radii)
+ind = 0
+edge = skel.edges[ind]
+while soma_ind not in edge:
+  ind = ind + 1
+  edge = skel.edges[ind]
+
 morpho = Morphology()
 sections = {}
-sections[skel.edges[soma_ind][1]] = morpho.append_root_section(
+sections[skel.edges[ind][1]] = morpho.append_root_section(
         PointLevel(
-        [list(skel.vertices[i]) for i in skel.edges[soma_ind]],  # x, y, z coordinates of each point
-        [2*skel.radii[i] for i in skel.edges[soma_ind]]),  # diameter of each point
+        [list(skel.vertices[i]) for i in skel.edges[ind]],  # x, y, z coordinates of each point
+        [2*skel.radii[i] for i in skel.edges[ind]]),  # diameter of each point
         SectionType.undefined)
 
-point_ind = soma_ind + 1
-while point_ind < len(skel.edges):
-    edge = skel.edges[point_ind]
-    if edge[0] in sections:
-        sections[edge[1]] = sections[edge[0]].append_section(
+for edge in skel.edges[ind+1:]:
+  if edge[0] in sections:
+    sections[edge[1]] = sections[edge[0]].append_section(
+      PointLevel(
+          [list(skel.vertices[i]) for i in edge],
+          [2*skel.radii[i] for i in edge]),
+          SectionType.undefined)
+  else:
+    print(edge)
+    sections[edge[1]] = morpho.append_root_section(
         PointLevel(
-            [list(skel.vertices[i]) for i in edge],
-            [2*skel.radii[i] for i in edge]),
-            SectionType.undefined)
-        point_ind = point_ind + 1
-    else:
-        break
+          [list(skel.vertices[i]) for i in edge],
+          [2*skel.radii[i] for i in edge]),
+          SectionType.undefined)
+
+for ei in range(ind-1, -1, -1):
+  edge = skel.edges[ei]
+  if edge[0] in sections:
+    sections[edge[1]] = sections[edge[0]].append_section(
+      PointLevel(
+          [list(skel.vertices[i]) for i in edge],
+          [2*skel.radii[i] for i in edge]),
+          SectionType.undefined)
+  else:
+    print(edge)
+    sections[edge[1]] = morpho.append_root_section(
+        PointLevel(
+          [list(skel.vertices[i]) for i in edge],
+          [2*skel.radii[i] for i in edge]),
+          SectionType.undefined)
+
+morpho.remove_unifurcations()
+morpho.write("swcs/pyr_2_startAtSoma_v5.swc")
+
+
+# point_ind = ind + 1
+# while point_ind < len(skel.edges):
+#     edge = skel.edges[point_ind]
+#     if edge[0] in sections:
+
+#         sections[edge[1]] = sections[edge[0]].append_section(
+#         PointLevel(
+#             [list(skel.vertices[i]) for i in edge],
+#             [2*skel.radii[i] for i in edge]),
+#             SectionType.undefined)
+#         point_ind = point_ind + 1
+#     else:
 #         print(edge)
 #         sections[edge[1]] = morpho.append_root_section(
 #             PointLevel(
@@ -82,20 +123,3 @@ while point_ind < len(skel.edges):
 #         [list(skel.vertices[i]) for i in skel.edges[0]],  # x, y, z coordinates of each point
 #         [2*skel.radii[i] for i in skel.edges[0]]),  # diameter of each point
 #         SectionType.undefined)
-
-# for edge in skel.edges[1:]:
-#   if edge[0] in sections:
-#     sections[edge[1]] = sections[edge[0]].append_section(
-#       PointLevel(
-#           [list(skel.vertices[i]) for i in edge],
-#           [2*skel.radii[i] for i in edge]),
-#           SectionType.undefined)
-#   else:
-#     print(edge)
-#     sections[edge[1]] = morpho.append_root_section(
-#         PointLevel(
-#           [list(skel.vertices[i]) for i in edge],
-#           [2*skel.radii[i] for i in edge]),
-#           SectionType.undefined)
-morpho.remove_unifurcations()
-morpho.write("pyr_2_startAtSoma.swc")

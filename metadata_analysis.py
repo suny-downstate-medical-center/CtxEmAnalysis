@@ -1,3 +1,4 @@
+from posixpath import split
 import cloudvolume
 import json
 import pandas as pd
@@ -18,8 +19,7 @@ for i in range(1,len(data['inline']['properties'])):
 metadata = pd.DataFrame.from_dict(mydata)
 metadata = metadata.set_index('ids')
 
-pyrcells = metadata[metadata['pyramidal']]
-pyrcells.head()
+soma_data = pd.read_csv('somas.csv')
 
 layers = ['L1',
           'L2',
@@ -68,17 +68,34 @@ for cell in cells:
         if data[cell][layer]['nCell'] > 0:
             for celli in metadata[metadata[cell] & metadata[layer]].iloc:
                 try:
-                    skel = c3_cloudvolume.skeleton.get(int(celli.name))
-                    soma_ind = np.argmax(skel.radii)
-                    data[cell][layer]['cell_locs'].append(list(skel.vertices[soma_ind]))
+                    soma = soma_data[soma_data['c3_rep_strict'] == int(celli.name)]
+                    x = int(soma.x.values)
+                    y=  int(soma.y.values)
+                    z = int(soma.z.values)
+                    data[cell][layer]['cell_locs'].append([x,y,z])
+                    # skel = c3_cloudvolume.skeleton.get(int(celli.name))
+                    # soma_ind = np.argmax(skel.radii)
+                    # data[cell][layer]['cell_locs'].append(list(skel.vertices[soma_ind]))
                 except:
-                    print('Cell ID: %s is missing' % (celli.name))
+                    print('Cell ID: %s is missing from c3_rep_strict' % (celli.name))
     print('\n')
 
-# Vol_nrn = 0
-# for cell in cells[:3]:
-#     for layer in layers:
-#         Vol_nrn = Vol_nrn + data[cell][layer]['Volume']
+Vol_nrn = 0
+for cell in cells[:3]:
+    for layer in layers:
+        Vol_nrn = Vol_nrn + data[cell][layer]['Volume']
 
-# beta_nrn = Vol_nrn / Vtissue
-# print('beta_nrn: ' + str(beta_nrn))
+beta_nrn = Vol_nrn / Vtissue
+print('beta_nrn: ' + str(beta_nrn))
+
+from matplotlib import pyplot as plt
+fig = plt.figure()
+ax = fig.add_subplot(projection='3d')
+
+cell = 'pyramidal'
+for layer, color in zip(layers[1:-2], ['b','r','g','k']):
+    for i in range(30):
+        loc = data[cell][layer]['cell_locs'][i]
+        ax.scatter(loc[0], loc[1], loc[2], color=color)
+plt.ion()
+plt.show()
