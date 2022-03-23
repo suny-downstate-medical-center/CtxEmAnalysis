@@ -1,0 +1,192 @@
+* [2022-2-7 Mon] - netpyne model and h01 dataset 
+** netpyne version of the model working, can have multiple pops, background 
+stimuli, etc.
+** H01 dataset progress - can get useful info from metadata, morphologies 
+still problematic 
+*** DONE - analyze metadata for layer specific densities 
+*** uses for morphologies: cell and blodd vessel specific surface areas, 
+**** currently, branchs in many cells are not attached, need to decide how we'd 
+want to stitch them together 
+**** also, issue with sections labelled -1 in swc file causing branches to be 
+connected back to central point 
+*** only 15000 neurons (per mm^3):
+**** "The cell census included 49,080 neurons and glia (Fig. 3A), 
+and 8.1k blood vessel cells (Fig. 3G). The number of neurons in this 
+human sample is ~16k/1 mm3, many fold lower than the density of neurons 
+in mouse cortex 11,12."
+*** for pyramidal, spiny stellate, and interneurons, beta_nrn = 0.07
+*** metadata for blood vessel cells might refer to cells in the blood vessels,
+not blood vessels themselves.  Either way, metadata seems wrong: Ncell = 240 for 
+'blood vessel cell'
+**** "cell census included 8.1k blood vessel cells"
+**** "The reconstructed blood vessels (22.6 cms in total length) also did not 
+show much evidence of layer-specific behavior"
+
+* [2022-2-8 Tue] - segregate netpyne ver for slice as in paper and further work 
+** metadata from h01 datase has numbers close to, but not exactly, those in paper 
+*** blood vessels (or blood-vessel-cells), whether the actual vessels or the cells 
+in them, metadata is way under 
+** DONE - make seaparate netpyne version of slice model 
+
+* [2022-2-10 Thu] - more on h01 dataset  
+** issues with morphology for neurons 
+*** jump point: 
+8694           0 2608960.000000000 493664.000000000 46332.000000000 104.043258667          -1
+**** connected left 
+6713           0 2608832.000000000 493568.000000000 46332.000000000 99.000000000        6709
+**** connected right 
+8695           0 2608800.000000000 493920.000000000 46332.000000000 104.043258667        8694
+**** unconnected right 
+6706           0 2608960.000000000 493728.000000000 45837.000000000 190.895263672        6705
+*** jump point:
+8652           0 2611424.000000000 493056.000000000 46464.000000000 71.554176331          -1
+**** unconnected left 
+6677           0 2611104.000000000 493088.000000000 46365.000000000 175.456542969        6676
+**** connected right 
+8653           0 2611552.000000000 492864.000000000 46695.000000000 106.437774658        8652
+*** looped point
+4384           0 2567808.000000000 407968.000000000 19866.000000000 962.282714844        4383
+**** connected left 
+4381           0 2567168.000000000 407808.000000000 20262.000000000 1632.647216797        4380
+**** connected below 
+4383           0 2567616.000000000 407840.000000000 20064.000000000 1188.377075195        4382
+**** connected above 
+4391           0 2566080.000000000 405760.000000000 21087.000000000 2097.648193359        4382
+**** loop back 
+4389           0 2568672.000000000 407584.000000000 18975.000000000 32.000000000        4388
+**** it's child 
+4390           0 2567680.000000000 405920.000000000 14652.000000000 32.000000000        4389
+**** left of child 
+12310           0 2567744.000000000 405888.000000000 14355.000000000 45.254833221       12309
+
+* [2022-2-11 Fri] - mouse dataset
+** can find blood vessels pretty easily in neuroglancer, all one segment/section/whatever 
+don't know how to export though
+
+* [2022-2-21 Mon] - issue with morphologies 
+** michael hines' email 
+It appears to me, after zooming into a few of the roots that
+8652           0 2611424.000000000 493056.000000000 46464.000000000 71.554176331          -1
+should be connected to
+6677           0 2611104.000000000 493088.000000000 46365.000000000 175.456542969        6676
+
+8681           0 2615040.000000000 489120.000000000 50490.000000000 108.853111267        8680
+should be connected to one of 
+6679           0 2610784.000000000 493920.000000000 46827.000000000 163.217651367        6678
+6680           0 2610688.000000000 494208.000000000 46926.000000000 91.934761047        6679
+
+8694           0 2608960.000000000 493664.000000000 46332.000000000 104.043258667          -1
+should be connected to
+6713           0 2608832.000000000 493568.000000000 46332.000000000 99.000000000        6709
+what is strange about the latter is that there is a red line drawn between the two points even though they are not connected in the file.
+I need to look into the swc reader to figure out how that can happen.
+
+Notice that the type of all the roots is 0 (soma). Unfortunately in this case, the heuristic is to connect these to the first point (in this case id 1)
+However changing all types to 1 doesn't affect the view
+** working on script to fix swc, but not much luck so far 
+*** seems like point michael thinks first example should be connected to is not the closest 
+*** some of these points have children (second example)
+
+* [2022-2-23 Wed] - more morphs 
+** started putting swc data in dataframes 
+** can find parent -1 and connect to closest point, but some are actually connected to main structure,
+so dont want to do that everytime 
+*** need to determine if branch connected to maintree; if so, do something else 
+*** 6713 and 8699 have exactly the same coordinates, maybe need to merge 
+
+* [2022-3-10 Thu] - new em analysis repo 
+** metadata analysis moving forward 
+*** locations based on vertices don't make sense
+**** looks like no layer specificy when plotting out pyramidal cells 
+
+* [2022-3-17 Thu] - todos 
+** DONE - look at microns mouse data
+*** set up caveclient, but when running *client.materialize.get_tables()* get:
+Traceback (most recent call last):
+  File "/home/craig/SDinSlice/sdenv/lib/python3.8/site-packages/requests/adapters.py", line 440, in send
+    resp = conn.urlopen(
+  File "/home/craig/SDinSlice/sdenv/lib/python3.8/site-packages/urllib3/connectionpool.py", line 876, in urlopen
+    return self.urlopen(
+  File "/home/craig/SDinSlice/sdenv/lib/python3.8/site-packages/urllib3/connectionpool.py", line 876, in urlopen
+    return self.urlopen(
+  File "/home/craig/SDinSlice/sdenv/lib/python3.8/site-packages/urllib3/connectionpool.py", line 876, in urlopen
+    return self.urlopen(
+  File "/home/craig/SDinSlice/sdenv/lib/python3.8/site-packages/urllib3/connectionpool.py", line 866, in urlopen
+    retries = retries.increment(method, url, response=response, _pool=self)
+  File "/home/craig/SDinSlice/sdenv/lib/python3.8/site-packages/urllib3/util/retry.py", line 592, in increment
+    raise MaxRetryError(_pool, url, error or ResponseError(cause))
+urllib3.exceptions.MaxRetryError: HTTPSConnectionPool(host='minnie.microns-daf.com', port=443): Max retries exceeded with url: /materialize/api/v2/datastack/minnie65_public_v117/versions (Caused by ResponseError('too many 503 error responses'))
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "<stdin>", line 1, in <module>
+  File "/home/craig/SDinSlice/sdenv/lib/python3.8/site-packages/caveclient-4.11.0-py3.8.egg/caveclient/frameworkclient.py", line 339, in materialize
+  File "/home/craig/SDinSlice/sdenv/lib/python3.8/site-packages/caveclient-4.11.0-py3.8.egg/caveclient/materializationengine.py", line 143, in MaterializationClient
+  File "/home/craig/SDinSlice/sdenv/lib/python3.8/site-packages/caveclient-4.11.0-py3.8.egg/caveclient/materializationengine.py", line 190, in __init__
+  File "/home/craig/SDinSlice/sdenv/lib/python3.8/site-packages/caveclient-4.11.0-py3.8.egg/caveclient/materializationengine.py", line 226, in most_recent_version
+  File "/home/craig/SDinSlice/sdenv/lib/python3.8/site-packages/caveclient-4.11.0-py3.8.egg/caveclient/materializationengine.py", line 240, in get_versions
+  File "/home/craig/SDinSlice/sdenv/lib/python3.8/site-packages/requests/sessions.py", line 542, in get
+    return self.request('GET', url, **kwargs)
+  File "/home/craig/SDinSlice/sdenv/lib/python3.8/site-packages/requests/sessions.py", line 529, in request
+    resp = self.send(prep, **send_kwargs)
+  File "/home/craig/SDinSlice/sdenv/lib/python3.8/site-packages/requests/sessions.py", line 645, in send
+    r = adapter.send(request, **kwargs)
+  File "/home/craig/SDinSlice/sdenv/lib/python3.8/site-packages/requests/adapters.py", line 510, in send
+    raise RetryError(e, request=request)
+requests.exceptions.RetryError: HTTPSConnectionPool(host='minnie.microns-daf.com', port=443): Max retries exceeded with url: /materialize/api/v2/datastack/minnie65_public_v117/versions (Caused by ResponseError('too many 503 error responses'))
+*** I can access the example mesh from 
+'graphene://https://minnie.microns-daf.com/segmentation/table/minnie65_public_v117' 
+but  not with cv = cloudvolume.CloudVolume("precomputed://s3://bossdb-open-data/microns/minnie/minnie65-flat-seg/", use_https=True) 
+or cv = cloudvolume.CloudVolume("precomputed://gs://iarpa_microns_phase3/minnie65/seg", use_https=True). 
+not sure if all the relevant data's in the first one or not
+*** no radius for mesh.  mesh->skeleton->swc? or mesh->swc? or .asc?
+** TODO - look at connectivity from human ctx data 
+
+* [2022-3-21 Mon] - meeting and rxd version of netpyne model
+** meeting w/ forrest
+*** [[https://github.com/AllenInstitute/pcg_skel][Save time by generating robust neuronal skeletons directly from a ChunkedGraph dynamic segmentations!]]  
+*** [[https://github.com/sdorkenw/MeshParty][A package to work with meshes, designed around use cases for analyzing neuronal morphology]]
+*** [[https://meshparty.readthedocs.io/en/latest/guide/skeletons.html][mesh party for skeletons]] 
+*** shapediameter function to estimate diameter of mesh at every point
+
+* [2022-3-22 Tue] - meshes and skeletons
+** pcg_skel 
+*** installation error: numpy 1.22.1 is installed but numpy<1.22,>=1.18 is required by {'numba'}
+**** maybe should create separate python env 
+*** operates on chunked graph, so don't think necessary for mesh->skeleton 
+** meshparty 
+*** can download example cell id, need to know how to get other cell ids  
+*** skeletonize fails because pyembree not installed
+**** can't get conda installation working 
+***** [[https://github.com/scopatz/pyembree/issues/23][conda installation issue]]
+mikedh commented on Jun 22, 2020
+For whatever it's worth we install pyembree/embree 2.17.7 on the trimesh docker images (vanilla Python + Debian buster) using this bash script:
+wget https://github.com/mikedh/trimesh/blob/master/docker/builds/embree.bash
+sudo bash embree.bash
+***** bash file seemed to work but got following when running *meshparty.skeletonize.skeletonize_mesh*
+WARNING:root:calculating rays without pyembree, conda install pyembree for large speedup
+Traceback (most recent call last):
+  File "<stdin>", line 1, in <module>
+  File "/home/craig/SDinSlice/sdenv/lib/python3.8/site-packages/meshparty/skeletonize.py", line 221, in skeletonize_mesh
+    rs = ray_trace_distance(orig_skel_index[vert_filter], mesh)
+  File "/home/craig/SDinSlice/sdenv/lib/python3.8/site-packages/meshparty/ray_tracing.py", line 42, in ray_trace_distance
+    ray_inter = ray_pyembree.RayMeshIntersector(mesh)
+  File "/home/craig/SDinSlice/sdenv/lib/python3.8/site-packages/trimesh/exceptions.py", line 28, in __getattribute__
+    raise super(ExceptionModule, self).__getattribute__('exc')
+  File "/home/craig/SDinSlice/sdenv/lib/python3.8/site-packages/trimesh/ray/__init__.py", line 5, in <module>
+    from . import ray_pyembree
+  File "/home/craig/SDinSlice/sdenv/lib/python3.8/site-packages/trimesh/ray/ray_pyembree.py", line 10, in <module>
+    from pyembree import rtcore_scene
+ImportError: libembree.so.2: cannot open shared object file: No such file or directory
+**** [[https://github.com/embree/embree][embree ray tracing software]]
+
+* [2022-3-23 Wed] - working w/ human connectivity data 
+** synaptic connectivity data:
+Looks like the connectivity info is in massive json files here; gs://h01-release/data/20210601/c3/synapses/exported/json/
+Or less massive (presumably Apache Avro) files here gs://h01-release/data/20210601/c3/synapses/exported/
+** for an example cell, can find connections where it exists as *post synaptic partner* but as 
+presynaptic site 
+*** can't find connection presynaptic site's *neuron_id* or *base_neuron_id*
+*** frequently *neuron_id* and *base_neuron_id* match, but sometimes conflict 
+*** 17,555 cells not found in soma_data; 31,430 are
