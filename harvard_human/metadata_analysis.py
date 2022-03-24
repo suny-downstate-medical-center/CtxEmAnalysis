@@ -190,7 +190,7 @@ for ind in inds:
             input_data.append([cell_id, conn_file, conns])
 
 input_data = tuple(input_data)
-p = multiprocessing.Pool(6)
+p = multiprocessing.Pool(40)
 p.map(findConns, input_data)
 
 # for ind in inds:
