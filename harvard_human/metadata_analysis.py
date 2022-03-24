@@ -1,5 +1,5 @@
 from posixpath import split
-import cloudvolume
+# import cloudvolume
 import json
 import pandas as pd
 import numpy as np 
@@ -11,7 +11,7 @@ import multiprocessing
 
 # metadata = pd.read_pickle('h01_metadata.pkl')
 # metadata = pd.read_pickle('h01_metadata_c3.pkl')
-c3_cloudvolume = cloudvolume.CloudVolume('gs://h01-release/data/20210601/c3', progress=True)
+# c3_cloudvolume = cloudvolume.CloudVolume('gs://h01-release/data/20210601/c3', progress=True)
 
 data = json.load(open('metadata.json','r'))
 
