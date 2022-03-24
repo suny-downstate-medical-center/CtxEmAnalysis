@@ -185,7 +185,7 @@ conn_files = listdir('./exported/')
 input_data = []
 for ind in inds:
     for conn_file in conn_files:
-        if len(conn_file.split('.')) == 1:
+        if (len(conn_file.split('.')) == 1) or (conn_file != 'json'):
             cell_id = data[cell][layer]['cell_ids'][ind]
             input_data.append([cell_id, conn_file, conns])
 
