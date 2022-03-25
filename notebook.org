@@ -141,7 +141,7 @@ but  not with cv = cloudvolume.CloudVolume("precomputed://s3://bossdb-open-data/
 or cv = cloudvolume.CloudVolume("precomputed://gs://iarpa_microns_phase3/minnie65/seg", use_https=True). 
 not sure if all the relevant data's in the first one or not
 *** no radius for mesh.  mesh->skeleton->swc? or mesh->swc? or .asc?
-** TODO - look at connectivity from human ctx data 
+** DONE - look at connectivity from human ctx data 
 
 * [2022-3-21 Mon] - meeting and rxd version of netpyne model
 ** meeting w/ forrest
@@ -150,7 +150,7 @@ not sure if all the relevant data's in the first one or not
 *** [[https://meshparty.readthedocs.io/en/latest/guide/skeletons.html][mesh party for skeletons]] 
 *** shapediameter function to estimate diameter of mesh at every point
 
-* [2022-3-22 Tue] - meshes and skeletons
+* [2022-3-22 Tue] - [mouse] meshes and skeletons
 ** pcg_skel 
 *** installation error: numpy 1.22.1 is installed but numpy<1.22,>=1.18 is required by {'numba'}
 **** maybe should create separate python env 
@@ -190,3 +190,13 @@ presynaptic site
 *** can't find connection presynaptic site's *neuron_id* or *base_neuron_id*
 *** frequently *neuron_id* and *base_neuron_id* match, but sometimes conflict 
 *** 17,555 cells not found in soma_data; 31,430 are
+
+* [2022-3-25 Fri] - 
+** [human] using all connectivity data, finding example cell as pre and postsynaptic cell 
+** [mouse] questions for forrest:
+*** Where can I find all the cell ids? Right now just looking at the example_cell_id hard coded into the example notebook.
+**** need to look closer at ipynbs
+*** I'm having the same issue generating skeletons and .swc files with the example cell from mm3 dataset and meshparty 
+that I've been having with the h01 dataset using their precomputed skeletons and Morphio: unconnected trees when I import 
+the .swc into NEURON.  For the mm3 example cell, I checked if it was water tight, then ran fix_mesh(), but that didn't seem 
+to make it watertight and didn't fix the unconnected tree issue. 

@@ -185,12 +185,12 @@ conn_files = listdir('./exported/')
 input_data = []
 for ind in inds:
     for conn_file in conn_files:
-        if (len(conn_file.split('.')) == 1) or (conn_file != 'json'):
+        if (len(conn_file.split('.')) == 1) and (conn_file != 'json'):
             cell_id = data[cell][layer]['cell_ids'][ind]
             input_data.append([cell_id, conn_file, conns])
 
 input_data = tuple(input_data)
-p = multiprocessing.Pool(40)
+p = multiprocessing.Pool(59)
 p.map(findConns, input_data)
 
 # for ind in inds:
