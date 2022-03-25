@@ -193,6 +193,7 @@ presynaptic site
 
 * [2022-3-25 Fri] - 
 ** [human] using all connectivity data, finding example cell as pre and postsynaptic cell 
+*** for first example connection, can't find 
 ** [mouse] questions for forrest:
 *** Where can I find all the cell ids? Right now just looking at the example_cell_id hard coded into the example notebook.
 **** need to look closer at ipynbs

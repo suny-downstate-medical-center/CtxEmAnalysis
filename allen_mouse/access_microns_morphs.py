@@ -9,15 +9,26 @@ from morphio import PointLevel, SectionType, Option
 import numpy as np
 from meshparty import trimesh_io, trimesh_vtk
 from caveclient import CAVEclient
+from meshparty import skeletonize
+
 client = CAVEclient('minnie65_public_v117')
 example_cell_id = 864691135474648896
+
 # to enable a cache, create a MeshMeta object
 mm = trimesh_io.MeshMeta(cv_path = client.info.segmentation_source(),
                          disk_cache_path='minnie65_v117_meshes',
                          map_gs_to_https=True)
 
 mesh = mm.mesh(seg_id=example_cell_id)
-from meshparty import skeletonize
+
+## smoothing
+new_verts = skeletonize.smooth_graph(mesh.vertices,
+                                     mesh.graph_edges,
+                                     neighborhood=1,
+                                     r=.1,
+                                     iterations=100)
+mesh.vertices = new_verts
+mesh.fig_mesh(verbose=True)
 skel = skeletonize.skeletonize_mesh(mesh)
 # skel.export_to_swc(mesh)
 # morpho = Morphology()

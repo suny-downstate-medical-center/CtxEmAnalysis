@@ -45,6 +45,7 @@ missing_somas = open('missing_somas.txt', 'w')
 data = {}
 not_in_soma_data = []
 somewhere = []
+cell_ids = []
 for cell in cells:
     data[cell] = {}
     print(cell)
@@ -84,6 +85,7 @@ for cell in cells:
                     z = int(soma.z.values)
                     data[cell][layer]['cell_locs'].append([x,y,z])
                     data[cell][layer]['cell_ids'].append(celli.name)
+                    cell_ids.append(celli.name)
                     somewhere.append(celli.name)
                     if cell.upper().replace('-','_') != soma['celltype']:
                         print('Cell ID: %s has cell type conflict' % (celli.name))
@@ -98,6 +100,7 @@ for cell in cells:
                         z = int(soma.z.values)
                         data[cell][layer]['cell_locs'].append([x,y,z])
                         data[cell][layer]['cell_ids'].append(celli.name)
+                        cell_ids.append(celli.name)
                         somewhere.append(celli.name)
                         if cell.upper().replace('-','_') != soma['celltype']:
                             print('Cell ID: %s has cell type conflict' % (celli.name))
@@ -109,6 +112,7 @@ for cell in cells:
                             z = int(soma.z.values)
                             data[cell][layer]['cell_locs'].append([x,y,z])
                             data[cell][layer]['cell_ids'].append(celli.name)
+                            cell_ids.append(celli.name)
                             somewhere.append(celli.name)
                             if cell.upper().replace('-','_') != soma['celltype']:
                                 print('Cell ID: %s has cell type conflict' % (celli.name))
@@ -121,6 +125,7 @@ for cell in cells:
                                 data[cell][layer]['cell_locs'].append([x,y,z])
                                 data[cell][layer]['cell_ids'].append(celli.name)
                                 somewhere.append(celli.name)
+                                cell_ids.append(celli.name)
                                 if cell.upper().replace('-','_') != soma['celltype']:
                                     print('Cell ID: %s has cell type conflict' % (celli.name))
                             except:
@@ -163,14 +168,32 @@ def findConns(input_data):
     conns = []
     for conn in reader:
         if str(conn['pre_synaptic_site']['neuron_id']) == cell_id:
-            print('%s: found as presynaptic neuron' % (cell_id))
             return_list.append(conn)
+            found = False 
+            for id in cell_ids:
+                if int(id) == conn['post_synaptic_partner']['neuron_id']:
+                    found = True
+                    break
+            print('%s: presynaptic neuron' % (cell_id))
+            if found:
+                print('%s: found post synaptic neuron - %s' % (cell_id, id))
+            else:
+                print('%s: could not find post synaptic neuron - %s' % (cell_id, str(conn['post_synaptic_partnet']['neuron_id'])))
         elif conn['pre_synaptic_site']['base_neuron_id'] == cell_id:
             print('%s: presynaptic base neuron' % (cell_id))
             return_list.append(conn)
         elif str(conn['post_synaptic_partner']['neuron_id']) == cell_id:
-            print('%s: postsynaptic neuron' % (cell_id))
             return_list.append(conn)
+            found = False 
+            for id in cell_ids:
+                if int(id) == conn['pre_synaptic_site']['neuron_id']:
+                    found = True
+                    break
+            print('%s: postsynaptic neuron' % (cell_id))
+            if found:
+                print('%s: founr post synaptic neuron - %s' % (cell_id, id))
+            else:
+                print('%s: could not find post synaptic neuron - %s' % (cell_id, str(conn['pre_synaptic_site']['neuron_id'])))
     
 
 # look for synapse involving example cell
