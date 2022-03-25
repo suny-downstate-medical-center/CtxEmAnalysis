@@ -173,7 +173,6 @@ def findConns(input_data):
             for id in cell_ids:
                 if int(id) == conn['post_synaptic_partner']['neuron_id']:
                     found = True
-                    break
             print('%s: presynaptic neuron' % (cell_id))
             if found:
                 print('%s: found postsynaptic neuron - %s' % (cell_id, id))
@@ -188,7 +187,6 @@ def findConns(input_data):
             for id in cell_ids:
                 if int(id) == conn['pre_synaptic_site']['neuron_id']:
                     found = True
-                    break
             print('%s: postsynaptic neuron' % (cell_id))
             if found:
                 print('%s: found presynaptic neuron - %s' % (cell_id, id))
