@@ -28,9 +28,9 @@ new_verts = skeletonize.smooth_graph(mesh.vertices,
                                      r=.1,
                                      iterations=100)
 mesh.vertices = new_verts
-mesh.fig_mesh(verbose=True)
+# mesh.fix_mesh(verbose=True)
 skel = skeletonize.skeletonize_mesh(mesh)
-# skel.export_to_swc(mesh)
+skel.export_to_swc('example.swc')
 # morpho = Morphology()
 # sections = {}
 

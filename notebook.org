@@ -191,7 +191,7 @@ presynaptic site
 *** frequently *neuron_id* and *base_neuron_id* match, but sometimes conflict 
 *** 17,555 cells not found in soma_data; 31,430 are
 
-* [2022-3-25 Fri] - 
+* [2022-3-25 Fri] - connectivity and ?s for cortex 
 ** [human] using all connectivity data, finding example cell as pre and postsynaptic cell 
 *** for first example connection, can't find 
 ** [mouse] questions for forrest:
@@ -201,3 +201,7 @@ presynaptic site
 that I've been having with the h01 dataset using their precomputed skeletons and Morphio: unconnected trees when I import 
 the .swc into NEURON.  For the mm3 example cell, I checked if it was water tight, then ran fix_mesh(), but that didn't seem 
 to make it watertight and didn't fix the unconnected tree issue. 
+
+* [2022-3-30 Wed] - back to allen morphologies 
+** doesn't seem like reverse ordered segments is a problem, but can't connect 
+parentless to nearest childless neighbor becuase ordering is off

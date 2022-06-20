@@ -18,7 +18,8 @@ def isterminal(df, p):
     else:
         return True 
 
-fin = open('pyr_2.swc', 'r')
+# fin = open('pyr_2.swc', 'r')
+fin = open('allen_mouse/smoothed_example.swc')
 # fout = open('pyr_4_corrected.swc', 'w')
 points = {'point' : [], 'type' : [], 'x' : [], 'y' : [], 'z' : [],
         'radius' : [], 'parent' : []}
@@ -33,7 +34,7 @@ while True:
     z = False
     diam = False 
     parent = False 
-    if count > 1:
+    if count >= 0:
         linesplit = line.split(' ')
         points['point'].append(int(linesplit[0]))
         for l in linesplit[1:]:
@@ -61,7 +62,7 @@ while True:
                 elif parent:
                     points['parent'].append(int(l.split("\n")[0]))
                     parent = False 
-                    type = True 
+                    typ = True
     count = count + 1
 fin.close()
 
@@ -99,8 +100,27 @@ for point in noparent:
 for point, parent in zip(newpairs['point'], newpairs['parent']):
     print('%i to %i' % (point, parent))
 
+# write new swc 
+fout = open('allen_mouse/smoothed_example_corrected.swc', 'w')
+for datum in df.iloc:
+    if datum['point'] in noparent:
+        l = '%i %i %f %f %f %f' % (
+            datum['point'], datum['type'], datum['x'], datum['y'],
+            datum['z'], datum['radius']
+        )
+        parent = newpairs['parent'][np.argwhere(np.array(newpairs['point']) == datum['point'])[0][0]]
+        l = l + ' ' + str(parent)
+    else:
+        l = '%i %i %f %f %f %f %i' % (
+            datum['point'], datum['type'], datum['x'], datum['y'],
+            datum['z'], datum['radius'], datum['parent']
+        )
+    fout.write(l + '\n')
+fout.close()
 
-# for unconnected points get distance distance to other
+
+
+# # for unconnected points get distance distance to other
 # for point in points:
 #      if point is not 1:
 #          if points[point]['parent'] == -1:
