@@ -91,5 +91,6 @@ def skel_sort(df):
 
 # Try neuprint to 'heal' the morphology
 skel_df = skel_to_df(skel)
-heal_df = skel_sort(neuprint.skeleton.heal_skeleton(skel_df))
-neuprint.skeleton.skeleton_df_to_swc(heal_df, export="simple_heal.swc")
+heal_df = neuprint.skeleton.heal_skeleton(skel_df)
+skel_sort(heal_df)
+neuprint.skeleton.skeleton_df_to_swc(heal_df, export_path="example_heal.swc")
