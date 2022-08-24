@@ -14,7 +14,8 @@ from meshparty import skeletonize
 import neuprint
 
 client = CAVEclient("minnie65_public_v117")
-example_cell_id = 864691135474648896
+# example_cell_id = 864691135474648896
+example_cell_id = 864691136534887842
 
 # to enable a cache, create a MeshMeta object
 mm = trimesh_io.MeshMeta(
@@ -25,14 +26,14 @@ mm = trimesh_io.MeshMeta(
 
 mesh = mm.mesh(seg_id=example_cell_id)
 
-## smoothing
-new_verts = skeletonize.smooth_graph(
-    mesh.vertices, mesh.graph_edges, neighborhood=1, r=0.1, iterations=100
-)
-mesh.vertices = new_verts
-# mesh.fix_mesh(verbose=True)
-skel = skeletonize.skeletonize_mesh(mesh)
-# skel.export_to_swc("example.swc")
+# ## smoothing
+# new_verts = skeletonize.smooth_graph(
+#     mesh.vertices, mesh.graph_edges, neighborhood=1, r=0.1, iterations=100
+# )
+# mesh.vertices = new_verts
+# # mesh.fix_mesh(verbose=True)
+# skel = skeletonize.skeletonize_mesh(mesh)
+# # skel.export_to_swc("example.swc")
 
 
 ### Some function to make use of neuprint
@@ -90,7 +91,7 @@ def skel_sort(df):
 
 
 # Try neuprint to 'heal' the morphology
-skel_df = skel_to_df(skel)
-heal_df = neuprint.skeleton.heal_skeleton(skel_df)
-skel_sort(heal_df)
-neuprint.skeleton.skeleton_df_to_swc(heal_df, export_path="example_heal.swc")
+# skel_df = skel_to_df(skel)
+# heal_df = neuprint.skeleton.heal_skeleton(skel_df)
+# skel_sort(heal_df)
+# neuprint.skeleton.skeleton_df_to_swc(heal_df, export_path="example_heal.swc")
