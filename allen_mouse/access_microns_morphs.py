@@ -32,7 +32,7 @@ new_verts = skeletonize.smooth_graph(
 mesh.vertices = new_verts
 # mesh.fix_mesh(verbose=True)
 skel = skeletonize.skeletonize_mesh(mesh)
-skel.export_to_swc("example.swc")
+# skel.export_to_swc("example.swc")
 
 
 ### Some function to make use of neuprint
