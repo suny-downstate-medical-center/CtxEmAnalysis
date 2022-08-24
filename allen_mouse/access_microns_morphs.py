@@ -11,7 +11,7 @@ import numpy as np
 from meshparty import trimesh_io, trimesh_vtk
 from caveclient import CAVEclient
 from meshparty import skeletonize
-import neuprint
+# import neuprint
 
 client = CAVEclient("minnie65_public_v117")
 # example_cell_id = 864691135474648896
