@@ -14,8 +14,8 @@ from meshparty import skeletonize
 # import neuprint
 
 client = CAVEclient("minnie65_public_v117")
-example_cell_id = 864691135474648896
-# example_cell_id = 864691136534887842
+# example_cell_id = 864691135474648896
+example_cell_id = 864691136534887842
 
 # to enable a cache, create a MeshMeta object
 mm = trimesh_io.MeshMeta(
