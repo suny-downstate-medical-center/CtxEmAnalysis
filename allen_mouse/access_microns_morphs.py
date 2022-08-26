@@ -21,7 +21,7 @@ example_cell_id = 864691136534887842
 mm = trimesh_io.MeshMeta(
     cv_path=client.info.segmentation_source(),
     disk_cache_path="minnie65_v117_meshes",
-    map_gs_to_https=True,
+    map_gs_to_https=True, cache_size=0
 )
 
 mesh = mm.mesh(seg_id=example_cell_id)
