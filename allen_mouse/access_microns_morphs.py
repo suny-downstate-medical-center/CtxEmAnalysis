@@ -17,14 +17,30 @@ client = CAVEclient("minnie65_public_v117")
 # example_cell_id = 864691135474648896
 example_cell_id = 864691136534887842
 
-# to enable a cache, create a MeshMeta object
-mm = trimesh_io.MeshMeta(
-    cv_path=client.info.segmentation_source(),
-    disk_cache_path="minnie65_v117_meshes",
-    map_gs_to_https=True, cache_size=0
+cv = cloudvolume.CloudVolume(client.info.segmentation_source(), progress=True)
+bounds = cloudvolume.Bbox(
+    cv.bounds.minpt,
+    cv.bounds.minpt + np.round((cv.bounds.maxpt - cv.bounds.minpt) / 5),
+    dtype=np.int32,
 )
 
-mesh = mm.mesh(seg_id=example_cell_id)
+mesh = cv.mesh.get(example_cell_id, bounding_box=bounds)[example_cell_id]
+
+newmesh = trimesh_io(mesh.vertices, mesh.faces)
+
+skel = skeletonize.skeletonize_mesh(newmesh)
+
+# for edge in mesh.edges():
+
+
+# to enable a cache, create a MeshMeta object
+# mm = trimesh_io.MeshMeta(
+#     cv_path=client.info.segmentation_source(),
+#     disk_cache_path="minnie65_v117_meshes",
+#     map_gs_to_https=True, cache_size=0
+# )
+
+# mesh = mm.mesh(seg_id=example_cell_id)
 
 # ## smoothing
 # new_verts = skeletonize.smooth_graph(

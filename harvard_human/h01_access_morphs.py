@@ -11,7 +11,8 @@ import numpy as np
 # h.load_file('stdrun.hoc')
 # h.load_file('import3d.hoc')
 
-c3_cloudvolume = cloudvolume.CloudVolume('gs://h01-release/data/20210601/c3', progress=True)
+c3_cloudvolume = cloudvolume.CloudVolume('gs://h01-release/data/20210601/c2', progress=True)
+# c3_cloudvolume = cloudvolume.CloudVolume('gs://h01-release/data/20210601/blood_vessels_segments', progress=True)
 
 data = json.load(open('metadata.json','r'))
 
