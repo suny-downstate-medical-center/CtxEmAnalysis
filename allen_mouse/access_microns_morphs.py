@@ -26,7 +26,7 @@ bounds = cloudvolume.Bbox(
 
 mesh = cv.mesh.get(example_cell_id, bounding_box=bounds)[example_cell_id]
 
-newmesh = trimesh_io(mesh.vertices, mesh.faces)
+newmesh = trimesh_io.Mesh(mesh.vertices, mesh.faces)
 
 skel = skeletonize.skeletonize_mesh(newmesh)
 
